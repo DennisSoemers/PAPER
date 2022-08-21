@@ -30,3 +30,11 @@ Building the code in this repository has the following requirements.
 - [Vcpkg](https://github.com/microsoft/vcpkg).
 
 This project was set up exactly as in the [CommonLibSSE NG Sample Plugin](https://gitlab.com/colorglass/commonlibsse-sample-plugin), and I refer to that repository for highly detailed instructions on installation and building.
+
+## Credits
+
+Thanks to:
+- CharmedBaryon for [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG) and the [CommonLibSSE NG Sample Plugin](https://gitlab.com/colorglass/commonlibsse-sample-plugin).
+- The SKSE authors for [SKSE](http://skse.silverlock.org/).
+- Meh321 for [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444).
+- powerof3 for various (MIT-licensed) SKSE plugins that I used as example code, in particular [Papyrus Extender SSE](https://github.com/powerof3/PapyrusExtenderSSE).
