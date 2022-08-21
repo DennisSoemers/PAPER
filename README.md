@@ -17,7 +17,7 @@ At runtime, the plugin has the following requirements. Any user of this plugin (
 
 - [The Elder Scrolls V: Skyrim Special Edition](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/).
   - Tested with version 1.6.353 (the "Anniversary Edition").
-  - Probably also compatible with version 1.5.97 (SSE) and Skyrim VR, thanks to [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG).
+  - Probably also compatible with version 1.5.97 (SSE) and Skyrim VR, thanks to [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG) (**but not tested**).
 - [Skyrim Script Extender](https://skse.silverlock.org/)
 - [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444)
 
