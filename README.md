@@ -9,7 +9,7 @@ This is an [SKSE](https://skse.silverlock.org/) plugin that can be loaded at run
 
 ## New Functions and Events
 
-TODO add documentation
+Documentation on how to use the new functions and events can be found on [this repository's Wiki pages](https://github.com/DennisSoemers/PAPER/wiki).
 
 ## Runtime Requirements (for users)
 
