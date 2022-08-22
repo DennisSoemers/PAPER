@@ -11,6 +11,10 @@ This is an [SKSE](https://skse.silverlock.org/) plugin that can be loaded at run
 
 Documentation on how to use the new functions and events can be found on [this repository's Wiki pages](https://github.com/DennisSoemers/PAPER/wiki).
 
+## Download
+
+The plugin can be downloaded from [its NexusMods page](https://www.nexusmods.com/skyrimspecialedition/mods/73849).
+
 ## Runtime Requirements (for users)
 
 At runtime, the plugin has the following requirements. Any user of this plugin (or mods that in turn require this plugin) need to have this installed locally.
