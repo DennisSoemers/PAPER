@@ -20,6 +20,11 @@ configure_file(
         ${CMAKE_CURRENT_BINARY_DIR}/version.rc
         @ONLY)
 
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.h.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/version.h
+        @ONLY)
+
 set(sources
         src/Papyrus.cpp
         src/OnHitEventHandler.cpp
