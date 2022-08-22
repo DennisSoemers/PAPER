@@ -31,6 +31,10 @@ Building the code in this repository has the following requirements.
 
 This project was set up exactly as in the [CommonLibSSE NG Sample Plugin](https://gitlab.com/colorglass/commonlibsse-sample-plugin), and I refer to that repository for highly detailed instructions on installation and building.
 
+## See also
+
+- [powerofthree's Papyrus Extender](https://www.nexusmods.com/skyrimspecialedition/mods/22854), which is similar in that its primary purpose is to expose new Papyrus functions and events, but much more impressive with a significantly greater scope.
+
 ## Credits
 
 Thanks to:
