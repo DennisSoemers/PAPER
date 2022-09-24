@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
-  "name": "onhit-events-plugin",
+  "name": "paper-plugin",
   "version-string": "1.0.0",
   "port-version": 0,
   "description": "The PAper Papyrus ExtendeR. Plugin to expose new functions and events to Skyrim's 'Papyrus' scripting language.",
