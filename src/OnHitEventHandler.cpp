@@ -19,22 +19,22 @@ RE::BSEventNotifyControl OnHitEventHandler::ProcessEvent(const RE::TESHitEvent* 
         const auto applicationRuntime = RE::GetDurationOfApplicationRunTime();
 
         bool skipEvent = false;
-        bool clearRecentHits = true;
+        size_t numToRemove = 0;
         for (const auto& recentHit : recentHits) {
             if (recentHit.applicationRuntime == applicationRuntime) {
-                // We're probably still in the same frame (or close enough), so don't clear data yet
-                clearRecentHits = false;
-
                 if (recentHit.cause == a_event->cause.get() && recentHit.target == target) {
                     // Already processed hit for same cause+target too recently, so skip
                     skipEvent = true;
                     break;
                 }
+            } else {
+                // Data from older frames / long enough ago, keep clearing
+                ++numToRemove;
             }
         }
 
-        if (clearRecentHits) {
-            recentHits.clear();
+        if (numToRemove > 0) {
+            recentHits.erase(recentHits.begin(), recentHits.begin() + numToRemove);
         }
 
         if (!skipEvent) {
