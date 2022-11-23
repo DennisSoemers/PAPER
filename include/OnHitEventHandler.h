@@ -12,16 +12,16 @@ namespace OnHitEvents {
      */
     struct RecentHitEventData {
 
-        RecentHitEventData(const RE::TESObjectREFR* target, const RE::TESObjectREFR* cause,
-                           const float applicationRuntime)
+        RecentHitEventData(RE::TESObjectREFR* target, RE::TESObjectREFR* cause,
+                           float applicationRuntime)
             : target(target), cause(cause), applicationRuntime(applicationRuntime) {}
 
         /** The target that was hit */
-        const RE::TESObjectREFR* target;
+        RE::TESObjectREFR* target;
         /** The cause / aggressor of the hit */
-        const RE::TESObjectREFR* cause;
+        RE::TESObjectREFR* cause;
         /** Runtime of the Skyrim application at the time the event was received */
-        const float applicationRuntime;
+        float applicationRuntime;
 
     };
 

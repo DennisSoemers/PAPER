@@ -1,10 +1,10 @@
+#include <OnEquipEventHandler.h>
 #include <OnHitEventHandler.h>
 #include <Papyrus.h>
 
 #include <stddef.h>
 
 using namespace RE::BSScript;
-using namespace OnHitEvents;
 using namespace SKSE;
 using namespace SKSE::log;
 using namespace SKSE::stl;
@@ -51,6 +51,7 @@ namespace {
         log::trace("Initializing event sink...");
         auto scriptEventSource = RE::ScriptEventSourceHolder::GetSingleton();
         if (scriptEventSource) {
+            scriptEventSource->AddEventSink(&OnEquipEvents::OnEquipEventHandler::GetSingleton());
             scriptEventSource->AddEventSink(&OnHitEvents::OnHitEventHandler::GetSingleton());
             log::trace("Event sink initialized.");
         } else {
