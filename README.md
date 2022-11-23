@@ -2,6 +2,7 @@
 [![C++23](https://img.shields.io/static/v1?label=standard&message=C%2B%2B23&color=blue&logo=c%2B%2B&&logoColor=white&style=flat)](https://en.cppreference.com/w/cpp/compiler_support)
 [![Platform](https://img.shields.io/static/v1?label=platform&message=windows&color=dimgray&style=flat)](#)
 ![GitHub](https://img.shields.io/github/license/DennisSoemers/PAPER)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/DennisSoemers/PAPER)
 
 The PAper Papyrus ExtendeR. Plugin to expose new functions and events to Skyrim's "Papyrus" scripting language.
 
