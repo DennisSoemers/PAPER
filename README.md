@@ -20,9 +20,9 @@ The plugin can be downloaded from [its NexusMods page](https://www.nexusmods.com
 At runtime, the plugin has the following requirements. Any user of this plugin (or mods that in turn require this plugin) need to have this installed locally.
 
 - [The Elder Scrolls V: Skyrim Special Edition](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/).
-  - Tested with version 1.6.353 (the "Anniversary Edition").
-  - Probably also compatible with version 1.5.97 (SSE) versions 1.6.xxx, thanks to [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG) (**but not tested**).
-  - Currently **not** compatible with Skyrim VR.
+  - Tested with versions 1.5.97 (SSE) and 1.6.353 (the "Anniversary Edition").
+  - Probably also compatible with versions 1.6.xxx (beyond 1.6.353), thanks to [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG) (**but not tested**).
+  - Hopefully, as of version 2.0.0, also compatible with Skyrim VR (**but not tested**).
 - [Skyrim Script Extender](https://skse.silverlock.org/)
 - [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444)
 
@@ -47,6 +47,7 @@ Thanks to:
 - The SKSE authors for [SKSE](http://skse.silverlock.org/).
 - Meh321 for [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444).
 - powerof3 for various (MIT-licensed) SKSE plugins that I used as example code, in particular [Papyrus Extender SSE](https://github.com/powerof3/PapyrusExtenderSSE).
+- Nightfallstorm for pointing me to the `SendAndRelayEvent()` function.
 
 ## Disclaimer
 
