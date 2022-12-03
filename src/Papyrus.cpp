@@ -23,6 +23,24 @@ namespace PAPER {
 	}
 
     /**
+     * Returns, from the given list of strings, a new array of strings containing only those
+     * strings that are recognised as installed resources.
+     */
+    std::vector<std::string> GetInstalledResources(RE::StaticFunctionTag*, const RE::reference_array<std::string> strings) {
+        std::vector<std::string> installedResources;
+        installedResources.reserve(strings.size());
+
+        auto it = strings.begin();
+        while (it != strings.end()) {
+            if (ResourceUtils::ResourceExists(*it)) {
+                installedResources.push_back(*it);
+            }
+        }
+
+        return installedResources;
+    }
+
+    /**
      * Returns an array of colours for all the warpaints for which we are able
      * to detect that they have been applied to the character's face.
      */
@@ -102,7 +120,9 @@ namespace PAPER {
 	 */
 	bool Bind(RE::BSScript::IVirtualMachine* vm) {
         vm->RegisterFunction("GetPaperVersion", PaperSKSEFunctions, GetPaperVersion, true);
+
         vm->RegisterFunction("ResourceExists", PaperSKSEFunctions, ResourceExists, true);
+        vm->RegisterFunction("GetInstalledResources", PaperSKSEFunctions, GetInstalledResources, true);
 
 		vm->RegisterFunction("GetWarpaintColors", PaperSKSEFunctions, GetWarpaintColors, true);
 
