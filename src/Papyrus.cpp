@@ -35,6 +35,7 @@ namespace PAPER {
             if (ResourceUtils::ResourceExists(*it)) {
                 installedResources.push_back(*it);
             }
+            ++it;
         }
 
         return installedResources;
