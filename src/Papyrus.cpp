@@ -56,11 +56,15 @@ namespace PAPER {
             return warpaintColors;
         }
 
+        while (actorBase->tintLayers == nullptr && actorBase->faceNPC != nullptr && actorBase->faceNPC != actorBase) {
+            actorBase = actorBase->faceNPC;
+        }
+
         const auto sex = actorBase->GetSex();
         const auto race = actorBase->race;
         const auto factory = RE::IFormFactory::GetConcreteFormFactoryByType<RE::BGSColorForm>();
 
-        if (race && factory) {
+        if (race && factory && actorBase->tintLayers) {
             const auto faceRelatedData = race->faceRelatedData[sex];
 
             if (faceRelatedData) {
@@ -68,7 +72,7 @@ namespace PAPER {
                 auto layer = actorBase->tintLayers->begin();
                 while (layer != actorBase->tintLayers->end()) {
                     // Need interpolation value > 0.0 for the layer to be visible
-                    if ((*layer)->GetInterpolationValue() > 0.f) {
+                    if ((*layer) && (*layer)->GetInterpolationValue() > 0.f) {
                         const auto tintIndex = (*layer)->tintIndex;
                         
                         // Figure out from tint assets defined in Race's face data whether
@@ -76,21 +80,23 @@ namespace PAPER {
                         bool isPaint = false;
                         auto tintAsset = faceRelatedData->tintMasks->begin();
                         while (tintAsset != faceRelatedData->tintMasks->end()) {
-                            auto tintLayer = &((*tintAsset)->texture);
-                            if (tintLayer && tintLayer->index == tintIndex) {
-                                const auto tintLayerType = tintLayer->skinTone.get();
+                            if (tintAsset) {
+                                auto tintLayer = &((*tintAsset)->texture);
+                                if (tintLayer && tintLayer->index == tintIndex) {
+                                    const auto tintLayerType = tintLayer->skinTone.get();
 
-                                if (tintLayerType ==
-                                        RE::TESRace::FaceRelatedData::TintAsset::TintLayer::SkinTone::kNone ||
-                                    tintLayerType ==
-                                        RE::TESRace::FaceRelatedData::TintAsset::TintLayer::SkinTone::kPaint) {
-                                    // I've found some things that very much look like warpaint with type None
-                                    // in the Creation Kit (e.g., Forsworn stuff in the Breton race), so we'll
-                                    // also allow that type.
-                                    isPaint = true;
+                                    if (tintLayerType ==
+                                            RE::TESRace::FaceRelatedData::TintAsset::TintLayer::SkinTone::kNone ||
+                                        tintLayerType ==
+                                            RE::TESRace::FaceRelatedData::TintAsset::TintLayer::SkinTone::kPaint) {
+                                        // I've found some things that very much look like warpaint with type None
+                                        // in the Creation Kit (e.g., Forsworn stuff in the Breton race), so we'll
+                                        // also allow that type.
+                                        isPaint = true;
+                                    }
+
+                                    break;
                                 }
-
-                                break;
                             }
 
                             ++tintAsset;
