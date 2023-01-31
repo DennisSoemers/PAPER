@@ -20,7 +20,7 @@ The plugin can be downloaded from [its NexusMods page](https://www.nexusmods.com
 
 At runtime, the plugin has the following requirements. Any user of this plugin (or mods that in turn require this plugin) need to have this installed locally.
 
-- [The Elder Scrolls V: Skyrim Special Edition](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/).
+- The Elder Scrolls V: Skyrim Special Edition.
   - Tested with versions 1.5.97 (SSE) and 1.6.353 (the "Anniversary Edition").
   - Also compatible with versions 1.6.xxx (beyond 1.6.353), including GOG (tested by users), thanks to [CommonLibSSE NG](https://github.com/CharmedBaryon/CommonLibSSE-NG).
   - As of version 2.0.0, also compatible with Skyrim VR (tested by users).
