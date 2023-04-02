@@ -129,9 +129,9 @@ namespace PAPER {
         vm->RegisterFunction("GetPaperVersion", PaperSKSEFunctions, GetPaperVersion, true);
 
         vm->RegisterFunction("ResourceExists", PaperSKSEFunctions, ResourceExists, true);
-        vm->RegisterFunction("GetInstalledResources", PaperSKSEFunctions, GetInstalledResources, true);
+        vm->RegisterFunction("GetInstalledResources", PaperSKSEFunctions, GetInstalledResources, false);
 
-		vm->RegisterFunction("GetWarpaintColors", PaperSKSEFunctions, GetWarpaintColors, true);
+		vm->RegisterFunction("GetWarpaintColors", PaperSKSEFunctions, GetWarpaintColors, false);
 
         return true;
     }

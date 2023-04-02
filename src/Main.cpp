@@ -1,3 +1,4 @@
+#include <OnContainerChangedEventHandler.h>
 #include <OnEquipEventHandler.h>
 #include <OnHitEventHandler.h>
 #include <Papyrus.h>
@@ -53,6 +54,7 @@ namespace {
         if (scriptEventSource) {
             scriptEventSource->AddEventSink(&OnEquipEvents::OnEquipEventHandler::GetSingleton());
             scriptEventSource->AddEventSink(&OnHitEvents::OnHitEventHandler::GetSingleton());
+            scriptEventSource->AddEventSink(&OnContainerChangedEvents::OnContainerChangedEventHandler::GetSingleton());
             log::trace("Event sink initialized.");
         } else {
             stl::report_and_fail("Failed to initialize event sink.");
