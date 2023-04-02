@@ -38,6 +38,22 @@ namespace OnContainerChangedEvents {
         [[nodiscard]] static OnContainerChangedEventHandler& GetSingleton() noexcept;
 
         /**
+         * The serialization handler for reverting game state.
+         */
+        static void OnRevert(SKSE::SerializationInterface*);
+
+        /**
+         * The serialization handler for saving data to the cosave.
+         */
+        static void OnGameSaved(SKSE::SerializationInterface* serde);
+
+        /**
+         * The serialization handler for loading data from a cosave.
+         */
+        static void OnGameLoaded(SKSE::SerializationInterface* serde);
+
+
+        /**
          * Does an item with the given form ID pass the given inventory event filter lists?
          */
         bool ItemPassesInventoryFilterLists(const RE::FormID itemID,

@@ -6,6 +6,12 @@ using namespace OnContainerChangedEvents;
 static RE::BSFixedString OnBatchItemsAddedEventName = "OnBatchItemsAdded";
 static RE::BSFixedString OnBatchItemsRemovedEventName = "OnBatchItemsRemoved";
 
+namespace {
+    inline const auto ItemsAddedRecord = _byteswap_ulong('IAEV');
+    inline const auto ItemsRemovedRecord = _byteswap_ulong('IREV');
+}
+
+
 OnContainerChangedEventHandler& OnContainerChangedEventHandler::GetSingleton() noexcept {
     static OnContainerChangedEventHandler instance;
     return instance;
@@ -178,4 +184,135 @@ bool OnContainerChangedEventHandler::ItemPassesInventoryFilterLists(
     }
 
     return false;
+}
+
+void OnContainerChangedEventHandler::OnRevert(SKSE::SerializationInterface*) {
+    auto& singleton = GetSingleton();
+
+    { 
+        std::lock_guard<std::mutex> lockGuard(singleton.batchedItemAddedEventsMapMutex); 
+        singleton.batchedItemAddedEventsMap.clear();
+    }
+
+    {
+        std::lock_guard<std::mutex> lockGuard(singleton.batchedItemRemovedEventsMapMutex);
+        singleton.batchedItemRemovedEventsMap.clear();
+    }
+}
+
+void OnContainerChangedEventHandler::OnGameLoaded(SKSE::SerializationInterface* serde) {
+    std::uint32_t type;
+    std::uint32_t size;
+    std::uint32_t version;
+
+    auto& singleton = GetSingleton();
+
+    { 
+        std::lock_guard<std::mutex> lockGuard(singleton.batchedItemAddedEventsMapMutex); 
+        std::lock_guard<std::mutex> lockGuard(singleton.batchedItemRemovedEventsMapMutex);
+
+        while (serde->GetNextRecordInfo(type, version, size)) {
+            if (type == ItemsAddedRecord) {
+                // First read how many items follow in this record, so we know how many times to iterate.
+                std::size_t itemsAddedMapSize;
+                serde->ReadRecordData(&itemsAddedMapSize, sizeof(itemsAddedMapSize));
+
+                // Iterate over the remaining data in the record.
+                for (; itemsAddedMapSize > 0; --itemsAddedMapSize) {
+                    RE::FormID keyForm;
+                    serde->ReadRecordData(&keyForm, sizeof(keyForm));
+                    RE::FormID newKeyForm;
+                    if (!serde->ResolveFormID(keyForm, newKeyForm)) {
+                        logger::warn("Form ID {:X} could not be found after loading the save.", keyForm);
+                    }
+
+                    size_t vecSize;
+                    serde->ReadRecordData(&vecSize, sizeof(vecSize));
+
+                    for (int i = 0; i < vecSize; ++i) {
+                        RE::FormID otherContainerForm;
+                        serde->ReadRecordData(&otherContainerForm, sizeof(otherContainerForm));
+                        RE::FormID newOtherContainerForm;
+                        if (!serde->ResolveFormID(otherContainerForm, newOtherContainerForm)) {
+                            logger::warn("Form ID {:X} could not be found after loading the save.", otherContainerForm);
+                        }
+
+                        RE::FormID baseObjForm;
+                        serde->ReadRecordData(&baseObjForm, sizeof(baseObjForm));
+                        RE::FormID newBaseObjForm;
+                        if (!serde->ResolveFormID(baseObjForm, newBaseObjForm)) {
+                            logger::warn("Form ID {:X} could not be found after loading the save.", baseObjForm);
+                        }
+
+                        std::int32_t itemCount;
+                        serde->ReadRecordData(&itemCount, sizeof(itemCount));
+
+                        singleton.batchedItemAddedEventsMap[keyForm].emplace_back(otherContainerForm, baseObjForm,
+                                                                                  itemCount);
+                    }
+                }
+            } else if (type == ItemsRemovedRecord) {
+                // TODO implement this one
+            } else {
+                logger::warn("Unknown record type in cosave.");
+                __assume(false);
+            }
+        }
+    }
+
+    // TODO if we loaded any data, we also need to queue up task to send the events
+}
+
+void OnContainerChangedEventHandler::OnGameSaved(SKSE::SerializationInterface* serde) {
+    auto& singleton = GetSingleton();
+
+    { 
+        std::lock_guard<std::mutex> lockGuard(singleton.batchedItemAddedEventsMapMutex); 
+
+        if (!serde->OpenRecord(ItemsAddedRecord, 0)) {
+            logger::error("Unable to open record to write cosave data.");
+            return;
+        }
+
+        auto itemsAddedMapSize = singleton.batchedItemAddedEventsMap.size();
+        serde->WriteRecordData(&itemsAddedMapSize, sizeof(itemsAddedMapSize));
+        for (auto& entry : singleton.batchedItemAddedEventsMap) {
+            serde->WriteRecordData(&entry.first, sizeof(entry.first));
+
+            auto& vec = entry.second;
+            auto vecSize = vec.size();
+            serde->WriteRecordData(&vecSize, sizeof(vecSize));
+
+            for (auto& vectorEntry : vec) {
+                serde->WriteRecordData(&(vectorEntry.otherContainer), sizeof(vectorEntry.otherContainer));
+                serde->WriteRecordData(&(vectorEntry.baseObj), sizeof(vectorEntry.baseObj));
+                serde->WriteRecordData(&(vectorEntry.itemCount), sizeof(vectorEntry.itemCount));
+            }
+        }
+    }
+
+    {
+        std::lock_guard<std::mutex> lockGuard(singleton.batchedItemRemovedEventsMapMutex);
+
+        if (!serde->OpenRecord(ItemsRemovedRecord, 0)) {
+            logger::error("Unable to open record to write cosave data.");
+            return;
+        }
+
+        auto itemsRemovedMapSize = singleton.batchedItemRemovedEventsMap.size();
+        serde->WriteRecordData(&itemsRemovedMapSize, sizeof(itemsRemovedMapSize));
+        for (auto& entry : singleton.batchedItemRemovedEventsMap) {
+            serde->WriteRecordData(&entry.first, sizeof(entry.first));
+            
+            auto& vec = entry.second;
+            auto vecSize = vec.size();
+            serde->WriteRecordData(&vecSize, sizeof(vecSize));
+
+            for (auto& vectorEntry : vec) {
+                serde->WriteRecordData(&(vectorEntry.otherContainer), sizeof(vectorEntry.otherContainer));
+                serde->WriteRecordData(&(vectorEntry.baseObj), sizeof(vectorEntry.baseObj));
+                serde->WriteRecordData(&(vectorEntry.itemCount), sizeof(vectorEntry.itemCount));
+            }
+        }
+    }
 }
