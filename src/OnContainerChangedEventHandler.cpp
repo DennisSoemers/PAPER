@@ -17,7 +17,7 @@ RE::BSEventNotifyControl OnContainerChangedEventHandler::ProcessEvent(
     if (a_event) {
         if (a_event->baseObj > 0) {
             if (a_event->oldContainer > 0) {
-                { 
+                {
                     std::lock_guard<std::mutex> lockGuard(batchedItemRemovedEventsMapMutex);
 
                     batchedItemRemovedEventsMap[a_event->oldContainer].emplace_back(a_event->newContainer,
@@ -73,6 +73,72 @@ RE::BSEventNotifyControl OnContainerChangedEventHandler::ProcessEvent(
 
                                     haveQueuedUpTaskRemovedEvents = false;
                                     batchedItemRemovedEventsMap.clear();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            if (a_event->newContainer > 0) {
+                {
+                    std::lock_guard<std::mutex> lockGuard(batchedItemAddedEventsMapMutex);
+
+                    batchedItemAddedEventsMap[a_event->newContainer].emplace_back(
+                        a_event->oldContainer, a_event->baseObj, a_event->itemCount);
+
+                    if (!haveQueuedUpTaskAddedEvents) {
+                        SKSE::GetTaskInterface()->AddTask([this]() {
+                            auto vm = RE::SkyrimVM::GetSingleton();
+
+                            if (vm) {
+                                // Process all the item-added events we've batched up
+                                {
+                                    std::lock_guard<std::mutex> lockGuard(batchedItemAddedEventsMapMutex);
+
+                                    for (auto& entry : batchedItemAddedEventsMap) {
+                                        auto newContainer = RE::TESForm::LookupByID<RE::TESObjectREFR>(entry.first);
+
+                                        if (newContainer) {
+                                            const auto handle = vm->handlePolicy.GetHandleForObject(
+                                                static_cast<RE::VMTypeID>(RE::FormType::Reference), newContainer);
+
+                                            std::vector<RE::TESForm*> baseItems;
+                                            std::vector<std::int32_t> itemCounts;
+                                            std::vector<RE::TESObjectREFR*> sourceContainers;
+
+                                            vm->InventoryEventFilterMapLock.Lock();
+
+                                            RE::SkyrimVM::InventoryEventFilterLists* filterLists = nullptr;
+                                            auto it = vm->InventoryEventFilterMap.find(handle);
+                                            if (it != vm->InventoryEventFilterMap.end()) {
+                                                filterLists = it->second;
+                                            }
+
+                                            for (auto& eventData : entry.second) {
+                                                const RE::FormID baseObjID = eventData.baseObj;
+
+                                                if (ItemPassesInventoryFilterLists(baseObjID, filterLists)) {
+                                                    baseItems.emplace_back(RE::TESForm::LookupByID(baseObjID));
+                                                    itemCounts.emplace_back(eventData.itemCount);
+                                                    sourceContainers.emplace_back(
+                                                        RE::TESForm::LookupByID<RE::TESObjectREFR>(
+                                                            eventData.otherContainer));
+                                                }
+                                            }
+
+                                            vm->InventoryEventFilterMapLock.Unlock();
+
+                                            auto eventArgs =
+                                                RE::MakeFunctionArguments(std::move(baseItems), std::move(itemCounts),
+                                                                          std::move(sourceContainers));
+                                            vm->SendAndRelayEvent(handle, &OnBatchItemsAddedEventName, eventArgs,
+                                                                  nullptr);
+                                        }
+                                    }
+
+                                    haveQueuedUpTaskAddedEvents = false;
+                                    batchedItemAddedEventsMap.clear();
                                 }
                             }
                         });
