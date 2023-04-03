@@ -59,6 +59,9 @@ namespace OnContainerChangedEvents {
         bool ItemPassesInventoryFilterLists(const RE::FormID itemID,
                                             const RE::SkyrimVM::InventoryEventFilterLists* filterLists) const;
 
+        void SendItemAddedEvents();
+        void SendItemRemovedEvents();
+
         /** Map of batched item-added events, to be processed */
         std::unordered_map<RE::FormID, std::vector<ItemEvent>> batchedItemAddedEventsMap;
         /** Map of batched item-removed events, to be processed */
