@@ -122,16 +122,54 @@ namespace PAPER {
         return warpaintColors;
     }
 
+    std::vector<std::int32_t> GetInventoryEventFilterIndices(RE::StaticFunctionTag*,
+                                                             const RE::reference_array<RE::TESForm*> akEventItems,
+                                                             RE::TESForm* akFilter,
+                                                             const RE::reference_array<std::int32_t> aiIndices) {
+        // TODO
+    }
+
+    std::vector<RE::TESForm*> ApplyInventoryEventFilterToForms(RE::StaticFunctionTag*,
+                                                               const RE::reference_array<std::int32_t> aiIndicesToKeep,
+                                                               const RE::reference_array<RE::TESForm*> akFormArray) {
+        // TODO
+    }
+
+    std::vector<RE::TESForm*> ApplyInventoryEventFilterToInts(RE::StaticFunctionTag*,
+                                                              const RE::reference_array<std::int32_t> aiIndicesToKeep,
+                                                              const RE::reference_array<std::int32_t> aiIntArray) {
+        // TODO
+    }
+
+    std::vector<RE::TESForm*> ApplyInventoryEventFilterToObjs(RE::StaticFunctionTag*,
+                                                              const RE::reference_array<std::int32_t> aiIndicesToKeep,
+                                                              const RE::reference_array<RE::TESObjectREFR*> akObjArray) {
+        // TODO
+    }
+
 	/**
 	 * Provide bindings for all our Papyrus functions.
 	 */
 	bool Bind(RE::BSScript::IVirtualMachine* vm) {
-        vm->RegisterFunction("GetPaperVersion", PaperSKSEFunctions, GetPaperVersion, true);
-
+        // Resources
         vm->RegisterFunction("ResourceExists", PaperSKSEFunctions, ResourceExists, true);
         vm->RegisterFunction("GetInstalledResources", PaperSKSEFunctions, GetInstalledResources, false);
 
+        // ActorBase
 		vm->RegisterFunction("GetWarpaintColors", PaperSKSEFunctions, GetWarpaintColors, false);
+
+        // Helper functions for filtering arguments of Inventory Events
+        vm->RegisterFunction("GetInventoryEventFilterIndices", PaperSKSEFunctions, GetInventoryEventFilterIndices,
+                             false);
+        vm->RegisterFunction("ApplyInventoryEventFilterToForms", PaperSKSEFunctions, ApplyInventoryEventFilterToForms,
+                             false);
+        vm->RegisterFunction("ApplyInventoryEventFilterToInts", PaperSKSEFunctions, ApplyInventoryEventFilterToInts,
+                             false);
+        vm->RegisterFunction("ApplyInventoryEventFilterToObjs", PaperSKSEFunctions, ApplyInventoryEventFilterToObjs,
+                             false);
+
+        // Other
+        vm->RegisterFunction("GetPaperVersion", PaperSKSEFunctions, GetPaperVersion, true);
 
         return true;
     }
