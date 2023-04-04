@@ -56,8 +56,8 @@ namespace OnContainerChangedEvents {
         /**
          * Does an item with the given form ID pass the given inventory event filter lists?
          */
-        bool ItemPassesInventoryFilterLists(const RE::FormID itemID,
-                                            const RE::SkyrimVM::InventoryEventFilterLists* filterLists) const;
+        static bool ItemPassesInventoryFilterLists(const RE::FormID itemID,
+                                                   const RE::SkyrimVM::InventoryEventFilterLists* filterLists);
 
         void SendItemAddedEvents();
         void SendItemRemovedEvents();
@@ -84,6 +84,43 @@ namespace OnContainerChangedEvents {
         OnContainerChangedEventHandler& operator=(const OnContainerChangedEventHandler&) = delete;
         OnContainerChangedEventHandler& operator=(OnContainerChangedEventHandler&&) = delete;
 
+    };
+
+    struct ItemEventsFilter : RE::SkyrimVM::ISendEventFilter {
+        ItemEventsFilter(const std::vector<RE::TESForm*> baseItems) : baseItems(baseItems){};
+        ItemEventsFilter() = delete;
+
+        const std::vector<RE::TESForm*> baseItems;
+
+        virtual bool matchesFilter(RE::VMHandle handle) override {
+            auto vm = RE::SkyrimVM::GetSingleton();
+
+            vm->InventoryEventFilterMapLock.Lock();
+
+            RE::SkyrimVM::InventoryEventFilterLists* filterLists = nullptr;
+            auto it = vm->InventoryEventFilterMap.find(handle);
+            if (it != vm->InventoryEventFilterMap.end()) {
+                filterLists = it->second;
+            }
+
+            if (filterLists) {
+                // Have filters, so need at least one of our items to match
+                for (auto baseObj : baseItems) {
+                    if (OnContainerChangedEventHandler::ItemPassesInventoryFilterLists(baseObj->formID, filterLists)) {
+                        vm->InventoryEventFilterMapLock.Unlock();
+                        return true;
+                    }
+                }
+            } else {
+                // No filters, so anything matches
+                vm->InventoryEventFilterMapLock.Unlock();
+                return true;
+            }
+
+            // Have filters but none matched, so return false
+            vm->InventoryEventFilterMapLock.Unlock();
+            return false;
+        }
     };
 #pragma warning(pop)
 }  // namespace OnContainerChangedEvents

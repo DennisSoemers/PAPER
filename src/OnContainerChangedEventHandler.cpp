@@ -73,34 +73,24 @@ void OnContainerChangedEventHandler::SendItemAddedEvents() {
                     const auto handle = vm->handlePolicy.GetHandleForObject(
                         static_cast<RE::VMTypeID>(RE::FormType::Reference), newContainer);
 
-                    std::vector<RE::TESForm*> baseItems;
-                    std::vector<std::int32_t> itemCounts;
-                    std::vector<RE::TESObjectREFR*> sourceContainers;
+                    if (handle && handle != vm->handlePolicy.EmptyHandle()) {
+                        std::vector<RE::TESForm*> baseItems;
+                        std::vector<std::int32_t> itemCounts;
+                        std::vector<RE::TESObjectREFR*> sourceContainers;
 
-                    vm->InventoryEventFilterMapLock.Lock();
-
-                    RE::SkyrimVM::InventoryEventFilterLists* filterLists = nullptr;
-                    auto it = vm->InventoryEventFilterMap.find(handle);
-                    if (it != vm->InventoryEventFilterMap.end()) {
-                        filterLists = it->second;
-                    }
-
-                    for (auto& eventData : entry.second) {
-                        const RE::FormID baseObjID = eventData.baseObj;
-
-                        if (ItemPassesInventoryFilterLists(baseObjID, filterLists)) {
-                            baseItems.emplace_back(RE::TESForm::LookupByID(baseObjID));
+                        for (auto& eventData : entry.second) {
+                            baseItems.emplace_back(RE::TESForm::LookupByID(eventData.baseObj));
                             itemCounts.emplace_back(eventData.itemCount);
                             sourceContainers.emplace_back(
                                 RE::TESForm::LookupByID<RE::TESObjectREFR>(eventData.otherContainer));
                         }
+
+                        auto filter = std::make_unique<ItemEventsFilter>(baseItems);
+                        auto eventArgs = RE::MakeFunctionArguments(std::move(baseItems), std::move(itemCounts),
+                                                                   std::move(sourceContainers));
+
+                        vm->SendAndRelayEvent(handle, &OnBatchItemsAddedEventName, eventArgs, filter.get());
                     }
-
-                    vm->InventoryEventFilterMapLock.Unlock();
-
-                    auto eventArgs = RE::MakeFunctionArguments(std::move(baseItems), std::move(itemCounts),
-                                                               std::move(sourceContainers));
-                    vm->SendAndRelayEvent(handle, &OnBatchItemsAddedEventName, eventArgs, nullptr);
                 }
             }
 
@@ -129,30 +119,18 @@ void OnContainerChangedEventHandler::SendItemRemovedEvents() {
                     std::vector<std::int32_t> itemCounts;
                     std::vector<RE::TESObjectREFR*> destContainers;
 
-                    vm->InventoryEventFilterMapLock.Lock();
-
-                    RE::SkyrimVM::InventoryEventFilterLists* filterLists = nullptr;
-                    auto it = vm->InventoryEventFilterMap.find(handle);
-                    if (it != vm->InventoryEventFilterMap.end()) {
-                        filterLists = it->second;
-                    }
-
                     for (auto& eventData : entry.second) {
-                        const RE::FormID baseObjID = eventData.baseObj;
-
-                        if (ItemPassesInventoryFilterLists(baseObjID, filterLists)) {
-                            baseItems.emplace_back(RE::TESForm::LookupByID(baseObjID));
-                            itemCounts.emplace_back(eventData.itemCount);
-                            destContainers.emplace_back(
-                                RE::TESForm::LookupByID<RE::TESObjectREFR>(eventData.otherContainer));
-                        }
+                        baseItems.emplace_back(RE::TESForm::LookupByID(eventData.baseObj));
+                        itemCounts.emplace_back(eventData.itemCount);
+                        destContainers.emplace_back(
+                            RE::TESForm::LookupByID<RE::TESObjectREFR>(eventData.otherContainer));
                     }
 
-                    vm->InventoryEventFilterMapLock.Unlock();
-
+                    auto filter = std::make_unique<ItemEventsFilter>(baseItems);
                     auto eventArgs = RE::MakeFunctionArguments(std::move(baseItems), std::move(itemCounts),
                                                                std::move(destContainers));
-                    vm->SendAndRelayEvent(handle, &OnBatchItemsRemovedEventName, eventArgs, nullptr);
+                    
+                    vm->SendAndRelayEvent(handle, &OnBatchItemsRemovedEventName, eventArgs, filter.get());
                 }
             }
 
@@ -163,7 +141,7 @@ void OnContainerChangedEventHandler::SendItemRemovedEvents() {
 }
 
 bool OnContainerChangedEventHandler::ItemPassesInventoryFilterLists(
-    const RE::FormID itemID, const RE::SkyrimVM::InventoryEventFilterLists* filterLists) const {
+    const RE::FormID itemID, const RE::SkyrimVM::InventoryEventFilterLists* filterLists) {
 
     if (!filterLists) {
         return true;
