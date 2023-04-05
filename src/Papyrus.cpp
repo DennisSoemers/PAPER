@@ -124,27 +124,86 @@ namespace PAPER {
 
     std::vector<std::int32_t> GetInventoryEventFilterIndices(RE::StaticFunctionTag*,
                                                              const RE::reference_array<RE::TESForm*> akEventItems,
-                                                             RE::TESForm* akFilter,
-                                                             const RE::reference_array<std::int32_t> aiIndices) {
-        // TODO
+                                                             RE::TESForm* akFilter) {
+        std::vector<std::int32_t> matchingIndices;
+
+        auto formList = RE::TESForm::LookupByID<RE::BGSListForm>(akFilter->formID);
+        if (formList) {
+            for (int i = 0; i < akEventItems.size(); ++i) {
+                if (formList->HasForm(akEventItems[i])) {
+                    matchingIndices.push_back(i);
+                }
+            }
+        } else {
+            for (int i = 0; i < akEventItems.size(); ++i) {
+                if (akFilter->formID == akEventItems[i]->formID) {
+                    matchingIndices.push_back(i);
+                }
+            }
+        }
+        
+        return matchingIndices;
+    }
+
+    std::vector<std::int32_t> UpdateInventoryEventFilterIndices(RE::StaticFunctionTag*,
+                                                                const RE::reference_array<RE::TESForm*> akEventItems,
+                                                                RE::TESForm* akFilter,
+                                                                const RE::reference_array<std::int32_t> aiIndices) {
+        std::vector<std::int32_t> matchingIndices;
+
+        auto formList = RE::TESForm::LookupByID<RE::BGSListForm>(akFilter->formID);
+        if (formList) {
+            for (int i = 0; i < aiIndices.size(); ++i) {
+                if (formList->HasForm(akEventItems[aiIndices[i]])) {
+                    matchingIndices.push_back(aiIndices[i]);
+                }
+            }
+        } else {
+            for (int i = 0; i < aiIndices.size(); ++i) {
+                if (akFilter->formID == akEventItems[aiIndices[i]]->formID) {
+                    matchingIndices.push_back(aiIndices[i]);
+                }
+            }
+        }
+
+        return matchingIndices;
     }
 
     std::vector<RE::TESForm*> ApplyInventoryEventFilterToForms(RE::StaticFunctionTag*,
                                                                const RE::reference_array<std::int32_t> aiIndicesToKeep,
                                                                const RE::reference_array<RE::TESForm*> akFormArray) {
-        // TODO
+        std::vector<RE::TESForm*> remainingForms;
+
+        for (int i = 0; i < aiIndicesToKeep.size(); ++i) {
+            remainingForms.push_back(akFormArray[aiIndicesToKeep[i]]);
+        }
+
+        return remainingForms;
     }
 
-    std::vector<RE::TESForm*> ApplyInventoryEventFilterToInts(RE::StaticFunctionTag*,
-                                                              const RE::reference_array<std::int32_t> aiIndicesToKeep,
-                                                              const RE::reference_array<std::int32_t> aiIntArray) {
-        // TODO
+    std::vector<int32_t> ApplyInventoryEventFilterToInts(RE::StaticFunctionTag*,
+                                                         const RE::reference_array<std::int32_t> aiIndicesToKeep,
+                                                         const RE::reference_array<std::int32_t> aiIntArray) {
+        std::vector<int32_t> remainingInts;
+
+        for (int i = 0; i < aiIndicesToKeep.size(); ++i) {
+            remainingInts.push_back(aiIntArray[aiIndicesToKeep[i]]);
+        }
+
+        return remainingInts;
     }
 
-    std::vector<RE::TESForm*> ApplyInventoryEventFilterToObjs(RE::StaticFunctionTag*,
-                                                              const RE::reference_array<std::int32_t> aiIndicesToKeep,
-                                                              const RE::reference_array<RE::TESObjectREFR*> akObjArray) {
-        // TODO
+    std::vector<RE::TESObjectREFR*> ApplyInventoryEventFilterToObjs(
+        RE::StaticFunctionTag*, const RE::reference_array<std::int32_t> aiIndicesToKeep,
+        const RE::reference_array<RE::TESObjectREFR*> akObjArray) {
+
+        std::vector<RE::TESObjectREFR*> remainingObjs;
+
+        for (int i = 0; i < aiIndicesToKeep.size(); ++i) {
+            remainingObjs.push_back(akObjArray[aiIndicesToKeep[i]]);
+        }
+
+        return remainingObjs;
     }
 
 	/**
@@ -160,6 +219,8 @@ namespace PAPER {
 
         // Helper functions for filtering arguments of Inventory Events
         vm->RegisterFunction("GetInventoryEventFilterIndices", PaperSKSEFunctions, GetInventoryEventFilterIndices,
+                             false);
+        vm->RegisterFunction("UpdateInventoryEventFilterIndices", PaperSKSEFunctions, UpdateInventoryEventFilterIndices,
                              false);
         vm->RegisterFunction("ApplyInventoryEventFilterToForms", PaperSKSEFunctions, ApplyInventoryEventFilterToForms,
                              false);
