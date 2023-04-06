@@ -10,7 +10,27 @@ This is an [SKSE](https://skse.silverlock.org/) plugin that can be loaded at run
 
 ## New Functions and Events
 
-Documentation on how to use the new functions and events can be found on [this repository's Wiki pages](https://github.com/DennisSoemers/PAPER/wiki).
+Detailed documentation on how to use the new functions and events can be found on [this repository's Wiki pages](https://github.com/DennisSoemers/PAPER/wiki).
+
+### New Events
+
+- [OnHit Events](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onhit-events)
+    - [`Event OnImpact(ObjectReference akAggressor, Form akSource, Projectile akProjectile, bool abPowerAttack, bool abSneakAttack, bool abBashAttack, bool abHitBlocked)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onimpact)
+- [Equip Events](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#equip-events)
+    - [`Event OnSpellEquipped(Spell akSpell, ObjectReference akReference)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onspellequipped)
+    - [`Event OnSpellUnequipped(Spell akSpell, ObjectReference akReference)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onspellunequipped)
+    - [`Event OnShoutEquipped(Shout akShout, ObjectReference akReference)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onshoutequipped)
+    - [`Event OnShoutUnequipped(Shout akShout, ObjectReference akReference)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onshoutunequipped)
+
+### New Functions
+
+- [Resources](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#resources)
+    - [`bool Function ResourceExists(String asResourcePath) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#resourceexists)
+    - [`String[] Function GetInstalledResources(String[] asStrings) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#getinstalledresources)
+- [ActorBase](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#actorbase)
+    - [`ColorForm[] Function GetWarpaintColors(ActorBase akActorBase) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#getwarpaintcolors)
+- [Other](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#other)
+    - [`int[] Function GetPaperVersion() global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#getpaperversion)
 
 ## Download
 
