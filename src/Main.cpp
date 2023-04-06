@@ -1,3 +1,4 @@
+#include <OnContainerChangedEventHandler.h>
 #include <OnEquipEventHandler.h>
 #include <OnHitEventHandler.h>
 #include <Papyrus.h>
@@ -53,6 +54,7 @@ namespace {
         if (scriptEventSource) {
             scriptEventSource->AddEventSink(&OnEquipEvents::OnEquipEventHandler::GetSingleton());
             scriptEventSource->AddEventSink(&OnHitEvents::OnHitEventHandler::GetSingleton());
+            scriptEventSource->AddEventSink(&OnContainerChangedEvents::OnContainerChangedEventHandler::GetSingleton());
             log::trace("Event sink initialized.");
         } else {
             stl::report_and_fail("Failed to initialize event sink.");
@@ -70,6 +72,20 @@ namespace {
             stl::report_and_fail("Failure to register Papyrus bindings.");
         }
     }
+
+    /**
+     * Initialize serialization.
+     */
+    void InitializeSerialization() {
+        log::trace("Initializing cosave serialization...");
+        auto* serde = GetSerializationInterface();
+        serde->SetUniqueID(_byteswap_ulong('BPAP'));
+        serde->SetSaveCallback(OnContainerChangedEvents::OnContainerChangedEventHandler::OnGameSaved);
+        serde->SetRevertCallback(OnContainerChangedEvents::OnContainerChangedEventHandler::OnRevert);
+        serde->SetLoadCallback(OnContainerChangedEvents::OnContainerChangedEventHandler::OnGameLoaded);
+        log::trace("Cosave serialization initialized.");
+    }
+
 }
 
 /**
@@ -84,6 +100,7 @@ SKSEPluginLoad(const LoadInterface* skse) {
 
     Init(skse);
     InitializeEventSink();
+    InitializeSerialization();
     InitializePapyrus();
 
     log::info("{} has finished loading.", plugin->GetName());

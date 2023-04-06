@@ -6,7 +6,7 @@ message("Using toolchain file ${CMAKE_TOOLCHAIN_FILE}.")
 ########################################################################################################################
 project(
         PAPER
-        VERSION 2.1.0
+        VERSION 2.2.0
         DESCRIPTION "The PAper Papyrus ExtendeR. Plugin to expose new functions and events to Skyrim's 'Papyrus' scripting language. "
         LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
@@ -27,6 +27,7 @@ configure_file(
 
 set(sources
         src/Papyrus.cpp
+        src/OnContainerChangedEventHandler.cpp
         src/OnEquipEventHandler.cpp
         src/OnHitEventHandler.cpp
         src/Main.cpp
