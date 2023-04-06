@@ -21,6 +21,9 @@ Detailed documentation on how to use the new functions and events can be found o
     - [`Event OnSpellUnequipped(Spell akSpell, ObjectReference akReference)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onspellunequipped)
     - [`Event OnShoutEquipped(Shout akShout, ObjectReference akReference)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onshoutequipped)
     - [`Event OnShoutUnequipped(Shout akShout, ObjectReference akReference)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onshoutunequipped)
+- [Inventory Events](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#inventory-events)
+    - [`Event OnBatchItemsAdded(Form[] akBaseItems, Int[] aiItemCounts, ObjectReference[] akSourceContainers)`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onbatchitemsadded)
+    - [Event OnBatchItemsRemoved(Form[] akBaseItems, Int[] aiItemCounts, ObjectReference[] akDestContainers)](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Events#onbatchitemsremoved)
 
 ### New Functions
 
@@ -29,6 +32,12 @@ Detailed documentation on how to use the new functions and events can be found o
     - [`String[] Function GetInstalledResources(String[] asStrings) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#getinstalledresources)
 - [ActorBase](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#actorbase)
     - [`ColorForm[] Function GetWarpaintColors(ActorBase akActorBase) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#getwarpaintcolors)
+- [Inventory Events](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#inventory-events)
+    - [`int[] Function GetInventoryEventFilterIndices(Form[] akEventItems, Form akFilter) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#getinventoryeventfilterindices)
+    - [`int[] Function UpdateInventoryEventFilterIndices(Form[] akEventItems, Form akFilter, int[] aiIndices) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#updateinventoryeventfilterindices)
+    - [`Form[] Function ApplyInventoryEventFilterToForms(int[] aiIndicesToKeep, Form[] akFormArray) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#applyinventoryeventfiltertoforms)
+    - [`int[] Function ApplyInventoryEventFilterToInts(int[] aiIndicesToKeep, int[] aiIntArray) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#applyinventoryeventfiltertoints)
+    - [`ObjectReference[] Function ApplyInventoryEventFilterToObjs(int[] aiIndicesToKeep, ObjectReference[] akObjArray) global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#applyinventoryeventfiltertoobjs)
 - [Other](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#other)
     - [`int[] Function GetPaperVersion() global native`](https://github.com/DennisSoemers/PAPER/wiki/New-Papyrus-Functions#getpaperversion)
 
