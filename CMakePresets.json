@@ -120,6 +120,26 @@
             }
         },
         {
+            "name": "build-relwithdebinfo-msvc",
+            "inherits": [
+                "base",
+                "vcpkg",
+                "win32-unicode",
+                "x64",
+                "msvc"
+            ],
+            "displayName": "Release With Debug Info",
+            "description": "Optimized release build with debug info.",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/release-msvc",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": {
+                    "type": "STRING",
+                    "value": "RelWithDebInfo"
+                }
+            }
+        },
+        {
             "name": "build-debug-clang-cl",
             "inherits": [
                 "base",
