@@ -6,6 +6,13 @@ namespace OnContainerChangedEvents {
 #pragma warning(push)
 #pragma warning(disable : 4251)
 
+    // Retrieve manual offset for edge cases CLIB-NG does not account for yet
+    // Thanks to Nightfallstorm!
+    template <class T>
+    T GetManualRelocateMemberVariable(void* object, REL::VariantOffset offset) {
+        return *(reinterpret_cast<T*>((uintptr_t)object + offset.offset()));
+    }
+
     /** 
      * Data for an event to be processed.
      */
@@ -95,11 +102,18 @@ namespace OnContainerChangedEvents {
         virtual bool matchesFilter(RE::VMHandle handle) override {
             auto vm = RE::SkyrimVM::GetSingleton();
 
-            vm->InventoryEventFilterMapLock.Lock();
+            auto inventoryEventFilterMapLock =
+                GetManualRelocateMemberVariable<RE::BSSpinLock>(vm, REL::VariantOffset(0x8940, 0x8940, 0x8960));
+
+            inventoryEventFilterMapLock.Lock();
+
+            const auto& inventoryEventFilterMap =
+                GetManualRelocateMemberVariable<RE::BSTHashMap<RE::VMHandle, RE::SkyrimVM::InventoryEventFilterLists*>>(
+                    vm, REL::VariantOffset(0x8948, 0x8948, 0x8968));
 
             RE::SkyrimVM::InventoryEventFilterLists* filterLists = nullptr;
-            auto it = vm->InventoryEventFilterMap.find(handle);
-            if (it != vm->InventoryEventFilterMap.end()) {
+            auto it = inventoryEventFilterMap.find(handle);
+            if (it != inventoryEventFilterMap.end()) {
                 filterLists = it->second;
             }
 
@@ -107,18 +121,18 @@ namespace OnContainerChangedEvents {
                 // Have filters, so need at least one of our items to match
                 for (auto baseObj : baseItems) {
                     if (OnContainerChangedEventHandler::ItemPassesInventoryFilterLists(baseObj->formID, filterLists)) {
-                        vm->InventoryEventFilterMapLock.Unlock();
+                        inventoryEventFilterMapLock.Unlock();
                         return true;
                     }
                 }
             } else {
                 // No filters, so anything matches
-                vm->InventoryEventFilterMapLock.Unlock();
+                inventoryEventFilterMapLock.Unlock();
                 return true;
             }
 
             // Have filters but none matched, so return false
-            vm->InventoryEventFilterMapLock.Unlock();
+            inventoryEventFilterMapLock.Unlock();
             return false;
         }
     };
