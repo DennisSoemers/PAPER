@@ -30,6 +30,7 @@ RE::BSEventNotifyControl OnContainerChangedEventHandler::ProcessEvent(
                                                                                     a_event->baseObj, a_event->itemCount);
 
                     if (!haveQueuedUpTaskRemovedEvents) {
+                        haveQueuedUpTaskRemovedEvents = true;
                         SKSE::GetTaskInterface()->AddTask([this]() { 
                             this->SendItemRemovedEvents();
                         });
@@ -45,6 +46,7 @@ RE::BSEventNotifyControl OnContainerChangedEventHandler::ProcessEvent(
                         a_event->oldContainer, a_event->baseObj, a_event->itemCount);
 
                     if (!haveQueuedUpTaskAddedEvents) {
+                        haveQueuedUpTaskAddedEvents = true;
                         SKSE::GetTaskInterface()->AddTask([this]() { 
                             this->SendItemAddedEvents();
                         });
