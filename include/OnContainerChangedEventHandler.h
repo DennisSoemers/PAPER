@@ -106,8 +106,7 @@ namespace OnContainerChangedEvents {
                 GetManualRelocateMemberVariable<RE::BSSpinLock>(vm, REL::VariantOffset(0x8940, 0x8940, 0x8960));
 
             auto& inventoryEventFilterMapLock = const_cast<RE::BSSpinLock&>(constInventoryEventFilterMapLock);
-
-            inventoryEventFilterMapLock.Lock();
+            RE::BSSpinLockGuard locker(inventoryEventFilterMapLock);
 
             const auto& inventoryEventFilterMap =
                 GetManualRelocateMemberVariable<RE::BSTHashMap<RE::VMHandle, RE::SkyrimVM::InventoryEventFilterLists*>>(
@@ -123,18 +122,15 @@ namespace OnContainerChangedEvents {
                 // Have filters, so need at least one of our items to match
                 for (auto baseObj : baseItems) {
                     if (OnContainerChangedEventHandler::ItemPassesInventoryFilterLists(baseObj->formID, filterLists)) {
-                        inventoryEventFilterMapLock.Unlock();
                         return true;
                     }
                 }
             } else {
                 // No filters, so anything matches
-                inventoryEventFilterMapLock.Unlock();
                 return true;
             }
 
             // Have filters but none matched, so return false
-            inventoryEventFilterMapLock.Unlock();
             return false;
         }
     };
