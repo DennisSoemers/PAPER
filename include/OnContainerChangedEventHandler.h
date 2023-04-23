@@ -102,11 +102,11 @@ namespace OnContainerChangedEvents {
         virtual bool matchesFilter(RE::VMHandle handle) override {
             auto vm = RE::SkyrimVM::GetSingleton();
 
-            const auto& constInventoryEventFilterMapLock =
-                GetManualRelocateMemberVariable<RE::BSSpinLock>(vm, REL::VariantOffset(0x8940, 0x8940, 0x8960));
+            //const auto& constInventoryEventFilterMapLock =
+            //    GetManualRelocateMemberVariable<RE::BSSpinLock>(vm, REL::VariantOffset(0x8940, 0x8940, 0x8960));
 
-            auto& inventoryEventFilterMapLock = const_cast<RE::BSSpinLock&>(constInventoryEventFilterMapLock);
-            RE::BSSpinLockGuard locker(inventoryEventFilterMapLock);
+            //auto& inventoryEventFilterMapLock = const_cast<RE::BSSpinLock&>(constInventoryEventFilterMapLock);
+            //RE::BSSpinLockGuard locker(inventoryEventFilterMapLock);
 
             const auto& inventoryEventFilterMap =
                 GetManualRelocateMemberVariable<RE::BSTHashMap<RE::VMHandle, RE::SkyrimVM::InventoryEventFilterLists*>>(
