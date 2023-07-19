@@ -28,13 +28,11 @@ RE::BSEventNotifyControl OnContainerChangedEventHandler::ProcessEvent(
 
                     batchedItemRemovedEventsMap[a_event->oldContainer].emplace_back(a_event->newContainer,
                                                                                     a_event->baseObj, a_event->itemCount);
+                }
 
-                    if (!haveQueuedUpTaskRemovedEvents) {
-                        haveQueuedUpTaskRemovedEvents = true;
-                        SKSE::GetTaskInterface()->AddTask([this]() { 
-                            this->SendItemRemovedEvents();
-                        });
-                    }
+                if (!haveQueuedUpTaskRemovedEvents) {
+                    haveQueuedUpTaskRemovedEvents = true;
+                    SKSE::GetTaskInterface()->AddTask([this]() { this->SendItemRemovedEvents(); });
                 }
             }
 
@@ -44,13 +42,11 @@ RE::BSEventNotifyControl OnContainerChangedEventHandler::ProcessEvent(
 
                     batchedItemAddedEventsMap[a_event->newContainer].emplace_back(
                         a_event->oldContainer, a_event->baseObj, a_event->itemCount);
+                }
 
-                    if (!haveQueuedUpTaskAddedEvents) {
-                        haveQueuedUpTaskAddedEvents = true;
-                        SKSE::GetTaskInterface()->AddTask([this]() { 
-                            this->SendItemAddedEvents();
-                        });
-                    }
+                if (!haveQueuedUpTaskAddedEvents) {
+                    haveQueuedUpTaskAddedEvents = true;
+                    SKSE::GetTaskInterface()->AddTask([this]() { this->SendItemAddedEvents(); });
                 }
             }
         }
